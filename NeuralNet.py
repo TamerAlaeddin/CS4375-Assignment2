@@ -1,12 +1,23 @@
+import os
 import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.neural_network import MLPClassifier
 import matplotlib.pyplot as plt
+import urllib.request
 
 class NeuralNet:
     def __init__(self, dataFile, header=None):
+        self.dataFile = dataFile
+        self.download_data_if_not_exists()
         self.raw_input = pd.read_csv(dataFile, header=header)
+
+    def download_data_if_not_exists(self):
+        if not os.path.exists(self.dataFile):
+            print(f"{self.dataFile} not found locally. Downloading from GitHub...")
+            url = "https://raw.githubusercontent.com/TamerAlaeddin/CS4375-Assignment2/main/iris.data"  # Replace with your actual URL
+            urllib.request.urlretrieve(url, self.dataFile)
+            print("Download complete.")
 
     def preprocess(self):
         # Handling missing values
@@ -69,7 +80,6 @@ class NeuralNet:
                         plt.plot(model.loss_curve_, label=label)
                         line_count += 1
 
-        # Save the final plot if not already saved
         if line_count % lines_per_plot != 0:
             plt.xlabel('Epochs')
             plt.ylabel('Loss')
@@ -77,7 +87,6 @@ class NeuralNet:
             plt.legend()
             plt.savefig(f'model_history_part{plot_count}.png')
 
-        # Output the results in tabular format
         results_df = pd.DataFrame(results, columns=['Activation', 'Learning Rate', 'Epochs', 'Layers', 'Train Score', 'Test Score'])
         print(results_df)
 
