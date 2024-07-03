@@ -4,20 +4,11 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.neural_network import MLPClassifier
 import matplotlib.pyplot as plt
-import urllib.request
 
 class NeuralNet:
-    def __init__(self, dataFile, header=None):
-        self.dataFile = dataFile
-        self.download_data_if_not_exists()
-        self.raw_input = pd.read_csv(dataFile, header=header)
-
-    def download_data_if_not_exists(self):
-        if not os.path.exists(self.dataFile):
-            print(f"{self.dataFile} not found locally. Downloading from GitHub...")
-            url = "https://raw.githubusercontent.com/TamerAlaeddin/CS4375-Assignment2/main/iris.data"  # Replace with your actual URL
-            urllib.request.urlretrieve(url, self.dataFile)
-            print("Download complete.")
+    def __init__(self, data_url, header=None):
+        self.data_url = data_url
+        self.raw_input = pd.read_csv(data_url, header=header)
 
     def preprocess(self):
         # Handling missing values
@@ -93,7 +84,8 @@ class NeuralNet:
         return results_df
 
 if __name__ == "__main__":
-    neural_network = NeuralNet("iris.data")
+    data_url = "https://raw.githubusercontent.com/TamerAlaeddin/CS4375-Assignment2/master/iris.data"
+    neural_network = NeuralNet(data_url)
     neural_network.preprocess()
     results = neural_network.train_evaluate()
     results.to_csv("results.csv", index=False)
